@@ -1,10 +1,11 @@
 local LoveBox = {}
+local LoveBox_mt = { __index = LoveBox }
 
---[[
-Allows us to instantiate like:
-   local var = LoveBox()
-]]--
 setmetatable(LoveBox, {
+   --[[
+   Allows us to instantiate like:
+      local var = LoveBox()
+   ]]
    __call =
    function (cls, ...)
       return cls:new(...)
@@ -15,44 +16,43 @@ setmetatable(LoveBox, {
    end
 })
 
-
 function LoveBox:new()
+   local instance = {}
    --[[
-   Allows constructed objects to call the
-   other functions in this class.
+   Allows our instances to call the functions of this class
    ]]
-   self.__index = self
+   setmetatable (instance, LoveBox_mt)
 
    --Instance variables
-   self.bg_r = 1
-   self.bg_g = 1
-   self.bg_b = 1
-   self.box_state = {}
-   self.height = 0
-   self.width = 0
-   self.origin_x = 0
-   self.origin_y = 0
+   instance.bg_r = 1
+   instance.bg_g = 1
+   instance.bg_b = 1
+   instance.height = 0
+   instance.width = 0
+   instance.origin_x = 0
+   instance.origin_y = 0
+   instance.padding_left = 0
+   instance.padding_right = 0
+   instance.padding_top = 0
+   instance.padding_bottom = 0
+   instance.set_scale_to_window = false
 
-   --[[
-   Allows the vars that contain instances of this class
-   to make the calls in other files. For example, the following
-   would fail without returning self:
-      local var = LoveBox()
-      var:functionInLoveBoxClass()
-   ]]
-   return self
-end
-
-function LoveBox:destroy()
+   return instance
 end
 
 function LoveBox:update(dt)
+   if self.set_scale_to_window then
+      self:setPositionY(love.graphics.getHeight() - self:getHeight())
+      self:setWidth(love.graphics.getWidth() - self.padding_right)
+   end
 end
 
 function LoveBox:draw()
    love.graphics.setColor(self.bg_r, self.bg_g, self.bg_b, 1)
-   love.graphics.rectangle("fill", self.origin_x, self.origin_y,
-                                   self.width, self.height)
+   love.graphics.rectangle("fill", self:getPositionX() + self.padding_left,
+                                   self:getPositionY() + self.padding_top,
+                                   self:getWidth() - self.padding_right,
+                                   self:getHeight() - (self.padding_bottom * 2))
 end
 
 function LoveBox:getHeight()
@@ -69,6 +69,29 @@ end
 
 function LoveBox:setWidth(width)
    self.width = width
+end
+
+function LoveBox:setPaddingLeft(padding_left)
+   self.padding_left = padding_left
+end
+
+function LoveBox:setPaddingRight(padding_right)
+   self.padding_right = padding_right
+end
+
+function LoveBox:setPaddingTop(padding_top)
+   self.padding_top = padding_top
+end
+
+function LoveBox:setPaddingBottom(padding_bottom)
+   self.padding_bottom = padding_bottom
+end
+
+function LoveBox:setPadding(padding_all)
+   self:setPaddingLeft(padding_all)
+   self:setPaddingRight(padding_all)
+   self:setPaddingTop(padding_all)
+   self:setPaddingBottom(padding_all)
 end
 
 function LoveBox:getPositionX()
@@ -88,8 +111,8 @@ function LoveBox:setPositionY(y)
 end
 
 function LoveBox:setPosition(x, y)
-   self.origin_x = x
-   self.origin_y = y
+   self:setPositionX(x)
+   self:setPositionY(y)
 end
 
 function LoveBox:setRGB(r, g, b)
@@ -98,17 +121,15 @@ function LoveBox:setRGB(r, g, b)
    self.bg_b = b
 end
 
-function LoveBox:setScaleToWindow(value)
-   if value == true then
-      --Push current box state
+function LoveBox:setScaleToWindow()
+   self.set_scale_to_window = true
 
-      --Set box to left side of screen
-      self.origin_x = 0
-      self.origin_y = 0
+   --Set box to left side of screen
+   self:setPositionX(0)
+   self:setPositionY(love.graphics.getHeight() - self:getHeight())
 
-      --Extend to rest of window
-      self.width = love.graphics.getWidth()
-   end
+   --Extend to rest of window
+   self:setWidth(love.graphics.getWidth())
 end
 
 return LoveBox
