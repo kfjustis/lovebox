@@ -36,6 +36,7 @@ function LoveBox:new()
    instance.padding_top = 0
    instance.padding_bottom = 0
    instance.scale_to_window = false
+   instance.text_queue = {}
 
    return instance
 end
@@ -53,6 +54,12 @@ function LoveBox:draw()
                                    self:getPositionY() + self.padding_top,
                                    self:getWidth() - self.padding_right,
                                    self:getHeight() - (self.padding_bottom * 2))
+   if self:queueLength() > 0 then
+      --Fix this to use text padding and not border padding
+      love.graphics.setColor(255/255, 255/255, 255/255, 1)
+      love.graphics.print(self.text_queue[1], self:getPositionX() + self.padding_left,
+                                         self:getPositionY() + self.padding_top)
+   end
 end
 
 function LoveBox:getHeight()
@@ -113,6 +120,23 @@ end
 function LoveBox:setPosition(x, y)
    self:setPositionX(x)
    self:setPositionY(y)
+end
+
+function LoveBox:printSimple(text)
+   self:queueTextLine(text)
+end
+
+function LoveBox:queueLength()
+   local length = 0
+   for _ in pairs (self.text_queue) do
+      length = length + 1
+   end
+   return length
+end
+
+--Stages a line of text to be rendered in the textbox
+function LoveBox:queueTextLine(text)
+   table.insert(self.text_queue, text)
 end
 
 function LoveBox:setRGB(r, g, b)
