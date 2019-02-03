@@ -31,10 +31,10 @@ function LoveBox:new()
    instance.width = 0
    instance.origin_x = 0
    instance.origin_y = 0
-   instance.padding_left = 0
-   instance.padding_right = 0
-   instance.padding_top = 0
-   instance.padding_bottom = 0
+   instance.border_padding_left = 0
+   instance.border_padding_right = 0
+   instance.border_padding_top = 0
+   instance.border_border_padding_bottom = 0
    instance.scale_to_window = false
    instance.text_queue = {}
 
@@ -44,21 +44,21 @@ end
 function LoveBox:update(dt)
    if self.scale_to_window then
       self:setPositionY(love.graphics.getHeight() - self:getHeight())
-      self:setWidth(love.graphics.getWidth() - self.padding_right)
+      self:setWidth(love.graphics.getWidth() - self.border_padding_right)
    end
 end
 
 function LoveBox:draw()
    love.graphics.setColor(self.bg_r, self.bg_g, self.bg_b, 1)
-   love.graphics.rectangle("fill", self:getPositionX() + self.padding_left,
-                                   self:getPositionY() + self.padding_top,
-                                   self:getWidth() - self.padding_right,
-                                   self:getHeight() - (self.padding_bottom * 2))
+   love.graphics.rectangle("fill", self:getPositionX() + self.border_padding_left,
+                                   self:getPositionY() + self.border_padding_top,
+                                   self:getWidth() - self.border_padding_right,
+                                   self:getHeight() - (self.border_padding_bottom * 2))
    if self:queueLength() > 0 then
-      --Fix this to use text padding and not border padding
+      --Fix this to use text border_padding and not border border_padding
       love.graphics.setColor(255/255, 255/255, 255/255, 1)
-      love.graphics.print(self.text_queue[1], self:getPositionX() + self.padding_left,
-                                         self:getPositionY() + self.padding_top)
+      love.graphics.print(self.text_queue[1], self:getPositionX() + self.border_padding_left,
+                                         self:getPositionY() + self.border_padding_top)
    end
 end
 
@@ -78,27 +78,27 @@ function LoveBox:setWidth(width)
    self.width = width
 end
 
-function LoveBox:setPaddingLeft(padding_left)
-   self.padding_left = padding_left
+function LoveBox:setBorderPaddingLeft(border_padding_left)
+   self.border_padding_left = border_padding_left
 end
 
-function LoveBox:setPaddingRight(padding_right)
-   self.padding_right = padding_right
+function LoveBox:setBorderPaddingRight(border_padding_right)
+   self.border_padding_right = border_padding_right
 end
 
-function LoveBox:setPaddingTop(padding_top)
-   self.padding_top = padding_top
+function LoveBox:setBorderPaddingTop(border_padding_top)
+   self.border_padding_top = border_padding_top
 end
 
-function LoveBox:setPaddingBottom(padding_bottom)
-   self.padding_bottom = padding_bottom
+function LoveBox:setBorderPaddingBottom(border_padding_bottom)
+   self.border_padding_bottom = border_padding_bottom
 end
 
-function LoveBox:setPadding(padding_all)
-   self:setPaddingLeft(padding_all)
-   self:setPaddingRight(padding_all)
-   self:setPaddingTop(padding_all)
-   self:setPaddingBottom(padding_all)
+function LoveBox:setBorderPadding(border_padding_all)
+   self:setBorderPaddingLeft(border_padding_all)
+   self:setBorderPaddingRight(border_padding_all)
+   self:setBorderPaddingTop(border_padding_all)
+   self:setBorderPaddingBottom(border_padding_all)
 end
 
 function LoveBox:getPositionX()
