@@ -35,13 +35,13 @@ function LoveBox:new()
    instance.padding_right = 0
    instance.padding_top = 0
    instance.padding_bottom = 0
-   instance.set_scale_to_window = false
+   instance.scale_to_window = false
 
    return instance
 end
 
 function LoveBox:update(dt)
-   if self.set_scale_to_window then
+   if self.scale_to_window then
       self:setPositionY(love.graphics.getHeight() - self:getHeight())
       self:setWidth(love.graphics.getWidth() - self.padding_right)
    end
@@ -121,8 +121,8 @@ function LoveBox:setRGB(r, g, b)
    self.bg_b = b
 end
 
-function LoveBox:setScaleToWindow()
-   self.set_scale_to_window = true
+function LoveBox:enableScaleToWindow()
+   self.scale_to_window = true
 
    --Set box to left side of screen
    self:setPositionX(0)
@@ -130,6 +130,18 @@ function LoveBox:setScaleToWindow()
 
    --Extend to rest of window
    self:setWidth(love.graphics.getWidth())
+end
+
+function LoveBox:disableScaleToWindow()
+   self.scale_to_window = false
+end
+
+function LoveBox:toggleScaleToWindow()
+   if self.scale_to_window then
+      self:disableScaleToWindow()
+      return
+   end
+   self:enableScaleToWindow()
 end
 
 return LoveBox
